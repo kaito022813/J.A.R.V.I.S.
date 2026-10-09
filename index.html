@@ -1,1 +1,107 @@
 
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>J.A.R.V.I.S.</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;background:#020910;color:#8deaff;
+  font-family:Arial,sans-serif;text-align:center;
+}
+header{padding:22px;font-size:25px;letter-spacing:5px}
+#orb{
+  width:210px;height:210px;border-radius:50%;
+  margin:55px auto 25px;
+  border:2px solid #39dfff;
+  box-shadow:0 0 25px #00bfff,inset 0 0 25px #007ba8;
+  display:grid;place-items:center;
+  animation:pulse 3s infinite;
+}
+#orb span{font-size:48px}
+@keyframes pulse{
+  50%{box-shadow:0 0 45px #00d9ff,inset 0 0 35px #008dbb}
+}
+#status{color:#d2faff;margin:20px}
+#log{
+  margin:20px;padding:12px;min-height:70px;
+  color:#d7f8ff;white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+input{
+  width:70%;padding:14px;border-radius:10px;
+  background:#071925;border:1px solid #31cfff;
+  color:white;font-size:16px;
+}
+button{
+  padding:13px;margin:6px;border-radius:10px;
+  background:#06344a;color:#9befff;
+  border:1px solid #31cfff;font-size:15px;
+}
+small{color:#6799aa}
+</style>
+</head>
+<body>
+<header>J.A.R.V.I.S.</header>
+<small>JUST A RATHER VERY INTELLIGENT SYSTEM</small>
+<div id="orb"><span>J.A.R.</span></div>
+<div id="status">SYSTEM ONLINE</div>
+<div id="log">お待ちしておりました。ご用件は何でしょうか？</div>
+<input id="msg" placeholder="話しかけてください">
+<button onclick="send()">送信</button>
+<button onclick="listen()">🎙 音声入力</button>
+<script>
+const statusEl=document.getElementById('status');
+const log=document.getElementById('log');
+
+function reply(text){
+ const t=text.toLowerCase();
+ if(t.includes('こんにちは')) return 'こんにちは。いつでもお手伝いいたします。';
+ if(t.includes('名前')) return '私はJ.A.R.V.I.S.です。';
+ if(t.includes('時間')) return '現在の時刻は'+new Date().toLocaleTimeString('ja-JP')+'です。';
+ if(t.includes('ありがとう')) return 'どういたしまして。';
+ if(t.includes('君')&&t.includes('何')) return '私はあなたをサポートするアシスタントです。';
+ return 'ご指示を確認しました。「'+text+'」ですね。現在、AIサーバーには未接続です。';
+}
+function send(){
+ const input=document.getElementById('msg');
+ const text=input.value.trim();
+ if(!text)return;
+ const answer=reply(text);
+ log.textContent='YOU：'+text+'\n\nJ.A.R.V.I.S.：'+answer;
+ input.value='';
+ statusEl.textContent='RESPONSE COMPLETE';
+ speak(answer);
+}
+function speak(text){
+ if(!('speechSynthesis' in window))return;
+ speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(text);
+ u.lang='ja-JP';u.rate=1;
+ speechSynthesis.speak(u);
+}
+function listen(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){
+  statusEl.textContent='音声入力はこのブラウザで非対応です';
+  return;
+ }
+ const r=new SR();r.lang='ja-JP';
+ statusEl.textContent='LISTENING...';
+ r.onresult=e=>{
+  document.getElementById('msg').value=e.results[0][0].transcript;
+  send();
+ };
+ r.onerror=()=>statusEl.textContent='音声入力を利用できません';
+ r.onend=()=>{if(statusEl.textContent==='LISTENING...')statusEl.textContent='SYSTEM ONLINE'};
+ r.start();
+}
+document.getElementById('msg').addEventListener('keydown',e=>{
+ if(e.key==='Enter')send();
+});
+</script>
+</body>
+</html>
+
