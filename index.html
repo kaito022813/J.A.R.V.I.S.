@@ -3,104 +3,411 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#020a10">
 <title>J.A.R.V.I.S.</title>
+
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0;background:#020910;color:#8deaff;
-  font-family:Arial,sans-serif;text-align:center;
+:root {
+  --cyan: #42e8ff;
+  --blue: #079bff;
+  --text: #b9f5ff;
+  --bg: #020a10;
 }
-header{padding:22px;font-size:25px;letter-spacing:5px}
-#orb{
-  width:210px;height:210px;border-radius:50%;
-  margin:55px auto 25px;
-  border:2px solid #39dfff;
-  box-shadow:0 0 25px #00bfff,inset 0 0 25px #007ba8;
-  display:grid;place-items:center;
-  animation:pulse 3s infinite;
+
+* {
+  box-sizing: border-box;
 }
-#orb span{font-size:48px}
-@keyframes pulse{
-  50%{box-shadow:0 0 45px #00d9ff,inset 0 0 35px #008dbb}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 30px 18px;
+  background:
+    radial-gradient(ellipse at center, #06232e 0%, var(--bg) 65%);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  text-align: center;
+  overflow-x: hidden;
 }
-#status{color:#d2faff;margin:20px}
-#log{
-  margin:20px;padding:12px;min-height:70px;
-  color:#d7f8ff;white-space:pre-wrap;
-  overflow-wrap:anywhere;
+
+h1 {
+  margin: 12px 0 0;
+  font-size: clamp(25px, 6vw, 42px);
+  font-weight: 400;
+  letter-spacing: 9px;
+  color: #8cefff;
+  text-shadow: 0 0 20px #00cfff;
 }
-input{
-  width:70%;padding:14px;border-radius:10px;
-  background:#071925;border:1px solid #31cfff;
-  color:white;font-size:16px;
+
+.subtitle {
+  margin: 30px 0 45px;
+  color: #659eaf;
+  font-size: clamp(12px, 3vw, 19px);
 }
-button{
-  padding:13px;margin:6px;border-radius:10px;
-  background:#06344a;color:#9befff;
-  border:1px solid #31cfff;font-size:15px;
+
+.jarvis-core {
+  position: relative;
+  width: min(84vw, 420px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  border-radius: 50%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  filter: drop-shadow(0 0 12px #00dfff);
+  transition: filter .3s, transform .3s;
 }
-small{color:#6799aa}
+
+.jarvis-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.energy-ring {
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  pointer-events: none;
+}
+
+.ring-one {
+  border-top-color: var(--cyan);
+  border-bottom-color: var(--cyan);
+  animation: rotateRing 5s linear infinite;
+}
+
+.ring-two {
+  inset: 12%;
+  border-left: 2px solid #00bfff;
+  border-right: 2px solid #00bfff;
+  animation: rotateRing 3s linear infinite reverse;
+}
+
+.ring-three {
+  inset: 20%;
+  border-top: 2px dashed #a7f8ff;
+  border-bottom: 2px dashed #a7f8ff;
+  animation: rotateRing 8s linear infinite;
+}
+
+.pulse {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--cyan);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.jarvis-core.active {
+  filter:
+    drop-shadow(0 0 25px #00eaff)
+    drop-shadow(0 0 55px #008cff);
+  transform: scale(1.035);
+}
+
+.jarvis-core.active .ring-one {
+  animation-duration: 1.5s;
+}
+
+.jarvis-core.active .ring-two {
+  animation-duration: 1s;
+}
+
+.jarvis-core.active .ring-three {
+  animation-duration: 2s;
+}
+
+.jarvis-core.active .pulse {
+  animation: pulseOut .8s ease-out 2;
+}
+
+@keyframes rotateRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseOut {
+  0% {
+    transform: scale(.85);
+    opacity: .9;
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+
+.status {
+  margin: 25px 0;
+  font-size: 21px;
+  color: #b8f7ff;
+  text-shadow: 0 0 10px #00bfff;
+}
+
+.reply {
+  max-width: 650px;
+  min-height: 80px;
+  margin: 20px auto 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(18px, 4vw, 25px);
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  max-width: 650px;
+  margin: 25px auto 0;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  padding: 18px;
+  border: 2px solid var(--cyan);
+  border-radius: 20px;
+  background: #071c27;
+  color: white;
+  font-size: 18px;
+  outline: none;
+}
+
+input:focus {
+  box-shadow: 0 0 15px #00cfff;
+}
+
+button {
+  padding: 15px 22px;
+  border: 2px solid var(--cyan);
+  border-radius: 20px;
+  background: #07384c;
+  color: var(--text);
+  font-size: 18px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+button:active {
+  transform: scale(.96);
+  box-shadow: 0 0 18px var(--cyan);
+}
+
+button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+#voice {
+  margin-top: 20px;
+  min-width: 180px;
+}
+
+.hint {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #578897;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .energy-ring {
+    animation-duration: 20s !important;
+  }
+}
 </style>
 </head>
-<body>
-<header>J.A.R.V.I.S.</header>
-<small>JUST A RATHER VERY INTELLIGENT SYSTEM</small>
-<div id="orb"><span>J.A.R.</span></div>
-<div id="status">SYSTEM ONLINE</div>
-<div id="log">お待ちしておりました。ご用件は何でしょうか？</div>
-<input id="msg" placeholder="話しかけてください">
-<button onclick="send()">送信</button>
-<button onclick="listen()">🎙 音声入力</button>
-<script>
-const statusEl=document.getElementById('status');
-const log=document.getElementById('log');
 
-function reply(text){
- const t=text.toLowerCase();
- if(t.includes('こんにちは')) return 'こんにちは。いつでもお手伝いいたします。';
- if(t.includes('名前')) return '私はJ.A.R.V.I.S.です。';
- if(t.includes('時間')) return '現在の時刻は'+new Date().toLocaleTimeString('ja-JP')+'です。';
- if(t.includes('ありがとう')) return 'どういたしまして。';
- if(t.includes('君')&&t.includes('何')) return '私はあなたをサポートするアシスタントです。';
- return 'ご指示を確認しました。「'+text+'」ですね。現在、AIサーバーには未接続です。';
+<body>
+
+<h1>J.A.R.V.I.S.</h1>
+
+<div class="subtitle">
+JUST A RATHER VERY INTELLIGENT SYSTEM
+</div>
+
+<div class="jarvis-core" id="jarvisCore"
+     role="button" tabindex="0"
+     aria-label="JARVIS HUDを起動">
+  <div class="energy-ring ring-one"></div>
+  <div class="energy-ring ring-two"></div>
+  <div class="energy-ring ring-three"></div>
+
+  <!-- jarvis-hud.png を同じ場所にアップロードする -->
+  <img src="jarvis-hud.png" alt="J.A.R.V.I.S. HUD"
+       class="jarvis-image"
+       onerror="this.style.display='none'">
+
+  <div class="pulse"></div>
+</div>
+
+<div class="status" id="status">SYSTEM ONLINE / STANDBY</div>
+
+<div class="reply" id="reply" aria-live="polite">
+お待ちしておりました。ご用件は何でしょうか？
+</div>
+
+<form id="chat">
+  <input id="message"
+         type="text"
+         placeholder="話しかけてください"
+         autocomplete="off"
+         required>
+  <button id="send" type="submit">送信</button>
+</form>
+
+<button id="voice" type="button">🎙️ 音声入力</button>
+
+<div class="hint">
+TAP THE HUD TO ACTIVATE
+</div>
+
+<script>
+/*
+  AI接続設定：
+  /api/chat はAIサーバー側で用意する必要があります。
+  GitHub PagesだけではAIサーバーは動きません。
+*/
+const API_URL = "/api/chat";
+
+const core = document.getElementById("jarvisCore");
+const statusText = document.getElementById("status");
+const reply = document.getElementById("reply");
+const form = document.getElementById("chat");
+const input = document.getElementById("message");
+const send = document.getElementById("send");
+const voice = document.getElementById("voice");
+
+let animationTimer;
+
+function activateHUD() {
+  core.classList.remove("active");
+  void core.offsetWidth;
+  core.classList.add("active");
+
+  clearTimeout(animationTimer);
+  animationTimer = setTimeout(() => {
+    core.classList.remove("active");
+  }, 1800);
 }
-function send(){
- const input=document.getElementById('msg');
- const text=input.value.trim();
- if(!text)return;
- const answer=reply(text);
- log.textContent='YOU：'+text+'\n\nJ.A.R.V.I.S.：'+answer;
- input.value='';
- statusEl.textContent='RESPONSE COMPLETE';
- speak(answer);
-}
-function speak(text){
- if(!('speechSynthesis' in window))return;
- speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(text);
- u.lang='ja-JP';u.rate=1;
- speechSynthesis.speak(u);
-}
-function listen(){
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){
-  statusEl.textContent='音声入力はこのブラウザで非対応です';
-  return;
- }
- const r=new SR();r.lang='ja-JP';
- statusEl.textContent='LISTENING...';
- r.onresult=e=>{
-  document.getElementById('msg').value=e.results[0][0].transcript;
-  send();
- };
- r.onerror=()=>statusEl.textContent='音声入力を利用できません';
- r.onend=()=>{if(statusEl.textContent==='LISTENING...')statusEl.textContent='SYSTEM ONLINE'};
- r.start();
-}
-document.getElementById('msg').addEventListener('keydown',e=>{
- if(e.key==='Enter')send();
+
+core.addEventListener("click", activateHUD);
+
+core.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    activateHUD();
+  }
+});
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const message = input.value.trim();
+  if (!message || send.disabled) return;
+
+  activateHUD();
+  send.disabled = true;
+  input.disabled = true;
+
+  statusText.textContent = "PROCESSING...";
+  reply.textContent = "AIからの応答を待っています...";
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message })
+    });
+
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
+
+    const data = await response.json();
+    const answer = data.reply || data.response || data.message;
+
+    if (typeof answer !== "string" || !answer.trim()) {
+      throw new Error("AIの応答が空です");
+    }
+
+    reply.textContent = answer;
+    statusText.textContent = "AI RESPONSE RECEIVED";
+    input.value = "";
+
+  } catch (error) {
+    console.error("JARVIS connection error:", error);
+
+    statusText.textContent = "AI SERVER OFFLINE";
+    reply.textContent =
+      "AIサーバーに接続できません。接続先URL、サーバーの起動状態、通信設定を確認してください。";
+
+  } finally {
+    send.disabled = false;
+    input.disabled = false;
+    input.focus();
+  }
+});
+
+voice.addEventListener("click", () => {
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    reply.textContent =
+      "このブラウザは音声入力に対応していません。文字で入力してください。";
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "ja-JP";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  voice.disabled = true;
+  statusText.textContent = "LISTENING...";
+
+  recognition.onresult = (event) => {
+    input.value = event.results[0][0].transcript;
+    statusText.textContent = "VOICE CAPTURED";
+    input.focus();
+  };
+
+  recognition.onerror = () => {
+    statusText.textContent = "VOICE INPUT ERROR";
+    reply.textContent =
+      "音声を認識できませんでした。マイクの許可を確認してください。";
+  };
+
+  recognition.onend = () => {
+    voice.disabled = false;
+    if (statusText.textContent === "LISTENING...") {
+      statusText.textContent = "SYSTEM ONLINE / STANDBY";
+    }
+  };
+
+  try {
+    recognition.start();
+  } catch (error) {
+    voice.disabled = false;
+    statusText.textContent = "SYSTEM ONLINE / STANDBY";
+    reply.textContent = "音声入力を開始できませんでした。";
+  }
 });
 </script>
+
 </body>
 </html>
